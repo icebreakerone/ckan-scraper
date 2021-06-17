@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -eu
+
+for name in $(jq '.result | @sh' < data/orgs.json | perl -pE 's/^"//; s/"$//;')
+do
+    name=$( echo -n $name | perl -pE "s/^'//; s/'$//;" )
+    curl -sS "${BASE_URL}/organization_show?id=${name}" > "data/orgs/${name}"
+done
