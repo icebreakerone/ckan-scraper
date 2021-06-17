@@ -1,7 +1,11 @@
 BASE_URL ?= http://search.energydata.org.uk/api/3/action
 WRITE_BASE_URL ?= http://search-beta.energydata.org.uk/api/3/action
 
+.PHONY: all
 all: create_datasets create_orgs
+
+.PHONY: fetch
+fetch: fetch_datasets fetch_orgs
 
 data/datasets.json: data
 	curl -sS ${BASE_URL}/package_list > data/datasets.json
