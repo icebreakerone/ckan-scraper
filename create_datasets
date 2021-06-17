@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -eu
+
+: ${CKAN_API_TOKEN:=$(cat API_TOKEN)}
+
+tempfile=$(tempfile)
+cd data/datasets
+for name in *
+do
+    data=$( jq '.result | del(.users)' < $name )
+    echo $data > $tempfile
+    echo "Creating $name"
+    curl -H "Authorization: ${CKAN_API_TOKEN}" \
+        -H 'Content-Type: application/json' \
+        -d @$tempfile \
+        $BASE_URL/package_create
+done
+rm $tempfile

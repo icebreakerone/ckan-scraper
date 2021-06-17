@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -eu
+
+: ${CKAN_API_TOKEN:=$(cat API_TOKEN)}
+
+tempfile=$(tempfile)
+cd data/orgs
+for name in *
+do
+    data=$( jq '.result | del(.users)' < $name )
+    echo $data > $tempfile
+    curl -sS -H "Authorization: ${CKAN_API_TOKEN}" \
+        -H 'Content-Type: application/json' \
+        -d @$tempfile \
+        $BASE_URL/organization_create
+done
+rm $tempfile
